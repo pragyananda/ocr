@@ -75,16 +75,28 @@ WSGI_APPLICATION = 'ocr.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ocr',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#         },
+#     }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ocr',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        },
+        'USER': 'dsvv',
+        'PASSWORD': 'PrKmzEhxG4kx2BLpT2SE4CL2MlSgkOcC',
+        'HOST': 'postgres://dsvv:PrKmzEhxG4kx2BLpT2SE4CL2MlSgkOcC@dpg-cjj6gib37aks73efqtug-a/ocr',  # or your database host
+        'PORT': '5432',       # PostgreSQL default port
     }
+}
+
 
 
 # Password validation
