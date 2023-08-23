@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" href="/static/image/DSVV-300x254.png">
+
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>OCR DSVV</title>
+
+</head>
+
+<body>
+    <!-- <nav class="mnb navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div style="padding: 15px 0;">
+                    <a href="#" id="msbo"><i class="ic fa fa-bars"></i></a>
+                </div>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">En</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">Draude Oba <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Settings</a></li>
+                            <li><a href="#">Upgrade</a></li>
+                            <li><a href="#">Help</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Logout</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-bell-o"></i></a></li>
+                    <li><a href="#"><i class="fa fa-comment-o"></i></a></li>
+                </ul>
+                <form class="navbar-form navbar-right">
+                    <input type="text" class="form-control" placeholder="Search...">
+                </form>
+            </div>
+        </div>
+    </nav> -->
+    <!--msb: main sidebar-->
+    <div class="msb" id="msb">
+        <nav class="navbar navbar-default" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <div class="brand-wrapper">
+                    <!-- Brand -->
+                    <div class="brand-name-wrapper">
+                        <a class="navbar-brand" style="color: black; font-weight: 700;" href="{%url 'home'%}">
+                            <img src="/static/image/DSVV-300x254.png" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Menu -->
+            <div class="side-menu-container">
+                <ul class="nav navbar-nav">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'upload_files'%}">
+                        {% csrf_token %}
+                        <li>
+                            <input type="file" id="folderInput" name="file" class="mb-2" webkitdirectory directory
+                                multiple>
+                            <ul id="selectedFiles" name="file"></ul>
+                        </li>
+                        <li>
+                            <button class="btn btn-primary">Submit</button>
+                        </li>
+                    </form>
+                    <div class=" mt-3">
+                        <button class="btn btn-primary"><a href="{% url 'archive'%}" style="color: white;">Archive</a></button>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="messages-container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message alert {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <!--main content wrapper-->
+    <div class="mcw">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2 class="text-center">Student Details</h2>
+                    <div class="table-container">
+                        <table class="table">
+                            <!-- Table header content -->
+                            <thead class="table-dark table-hover">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Dob</th>
+                                    <th>Mobile</th>
+                                    <th>Address</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <!-- Table body content -->
+                            <tbody>
+                                {% if uploaded_rows %}
+                                {% for row in uploaded_rows %}
+                                <tr data-row-id="{{ row.id }}">
+                                    <td><button class="clickimage btn btn-outline-primary btn-sm" data-image="{{ row.file.url }}">Show Image</button></td>
+                                    <td contenteditable="true" data-field="name">{{ row.name }}</td>
+                                    <td contenteditable="true" data-field="dob">{{ row.dob }}</td>
+                                    <td contenteditable="true" data-field="mobile">{{ row.mobile }}</td>
+                                    <td contenteditable="true" data-field="address">{{ row.address }}</td>
+                                    <td><button class="btn btn-outline-success btn-sm update-btn" style="display: none;">Update</button></td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No data found</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Finalize button -->
+                    <div class="text-lg-right mt-3">
+                        <button class="btn btn-primary">Finalize</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="image-viewer" style="border-radius: 10px;">
+                        <img id="clicked-image" src="" alt="" class="img-fluid" style="max-width: 125%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.clickimage').click(function () {
+            const imageUrl = $(this).data('image');
+            $('#clicked-image').attr('src', imageUrl);  // Update image source
+            return false;  // Prevent default link behavior
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('.message').each(function (index) {
+            $(this).delay(index * 2000).fadeIn(500, function () {
+                $(this).animate({ right: "20px" }, 500).delay(4000).fadeOut(500);
+            });
+        });
+    });
+</script>
+
+
+<script>
+    (function () {
+        $('#msbo').on('click', function () {
+            $('body').toggleClass('msb-x');
+        });
+    }());
+</script>
+<script>
+    const folderInput = document.getElementById('folderInput');
+    const selectedFilesList = document.getElementById('selectedFiles');
+
+    folderInput.addEventListener('change', handleFileSelection);
+
+    function handleFileSelection(event) {
+        selectedFilesList.innerHTML = '';
+
+        const files = event.target.files;
+        for (const file of files) {
+            const listItem = document.createElement('li');
+            listItem.textContent = file.webkitRelativePath;
+            selectedFilesList.appendChild(listItem);
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('.update-btn').on('click', function () {
+            const $row = $(this).closest('tr');
+            const cellId = $row.data('row-id');
+            const $editableCells = $row.find('td[contenteditable="true"]');
+            const dataToUpdate = {};
+
+            $editableCells.each(function () {
+                const $cell = $(this);
+                const field = $cell.data('field');
+                dataToUpdate[field] = $cell.html();  // Use the 'field' as the key
+            });
+
+            $.ajax({
+                url: '/update_cell/',  // Replace with your actual URL
+                type: 'POST',
+                data: {
+                    cell_id: cellId,
+                    data_to_update: JSON.stringify(dataToUpdate),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        showNotification('Content saved successfully', 'success');
+                        $('.update-btn').hide();  // Hide all update buttons
+                    } else {
+                        showNotification('Error saving content', 'danger');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                }
+            });
+
+            $editableCells.each(function () {
+                const $cell = $(this);
+                $cell.data('original-content', $cell.html());
+            });
+
+            $(this).hide();  // Hide the update button again
+        });
+
+        $('td[contenteditable="true"]').on('input', function () {
+            const $row = $(this).closest('tr');
+            const $updateButton = $row.find('.update-btn');
+            const originalContent = $(this).data('original-content');
+            const newContent = $(this).html();
+
+            if (originalContent !== newContent) {
+                $updateButton.show();
+            } else {
+                $updateButton.hide();
+            }
+        });
+    });
+</script>
+
+
+
+</html>
