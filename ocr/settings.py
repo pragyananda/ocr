@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,14 +88,7 @@ WSGI_APPLICATION = 'ocr.wsgi.application'
 #     }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ocr',
-        'USER': 'dsvv',
-        'PASSWORD': 'PrKmzEhxG4kx2BLpT2SE4CL2MlSgkOcC',
-        'HOST': 'postgres://dsvv:PrKmzEhxG4kx2BLpT2SE4CL2MlSgkOcC@dpg-cjj6gib37aks73efqtug-a/ocr',  # or your database host
-        'PORT': '5432',       # PostgreSQL default port
-    }
+    'default': dj_database_url.parse('postgres://dsvv:PrKmzEhxG4kx2BLpT2SE4CL2MlSgkOcC@dpg-cjj6gib37aks73efqtug-a.singapore-postgres.render.com/ocr')
 }
 
 
