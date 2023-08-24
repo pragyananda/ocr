@@ -25,4 +25,5 @@ urlpatterns = [
     path('upload/', views.uploadfile, name='upload_files'),
     path('update_cell/', views.update_cell, name='update_cell'),
     path('archive/', views.archive, name='archive'),
+    path('update_finalized/',views.update_finalized,name='finalize'),
 ]

@@ -136,7 +136,7 @@
                     </div>
                     <!-- Finalize button -->
                     <div class="text-lg-right mt-3">
-                        <button class="btn btn-primary">Finalize</button>
+                        <button id="finalize-button" class="btn btn-primary mt-3">Finalize</button>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -253,6 +253,38 @@
             } else {
                 $updateButton.hide();
             }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#finalize-button').click(function () {
+            const imageIds = [];
+            $('.update-btn:visible').each(function () {
+                const rowId = $(this).closest('tr').data('row-id');
+                imageIds.push(rowId);
+            });
+
+            // Make an AJAX request to update the finalized property
+            $.ajax({
+                url: '/update_finalized/',  // Update with the actual URL
+                type: 'POST',
+                data: {
+                    image_ids: JSON.stringify(imageIds),  // Convert object to JSON string
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Images finalized successfully.');
+                        // You might want to refresh the page or update the UI here
+                    } else {
+                        alert('Error finalizing images.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                }
+            });
         });
     });
 </script>

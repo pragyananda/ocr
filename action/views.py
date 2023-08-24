@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.core import serializers
 from django.views.decorators.http import require_POST
 import json
+import cv2
+from .OCR import *
 
 
 @require_POST
@@ -51,17 +53,44 @@ def uploadfile(request):
         
         for uploaded_file in uploaded_files:
             try:
+                image = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
+                st_details = do_ocr(image)
+                # print(st_details)
                 new_uploaded_file = UploadedFile(file=uploaded_file)
                 new_uploaded_file.save()
+                new_uploaded_file.name = st_details["name"]
+                new_uploaded_file.dob = st_details["dob"]
+                new_uploaded_file.mobile = st_details["mobile"]
+                new_uploaded_file.address = st_details["address"]
+                new_uploaded_file.save()
+                
                 uploaded_count += 1
             except Exception as e:
                 traceback.print_exc()
         
         if uploaded_count > 0:
-            messages.success(request, f'{uploaded_count} files uploaded successfully.')
+            messages.success(request, f'{uploaded_count} files uploaded and processed successfully.')
         else:
-            messages.error(request, 'No files were uploaded.')
+            messages.error(request, 'No files were uploaded or processed.')
 
     rows = UploadedFile.objects.all()
     return redirect('home')
+
+
+
+@require_POST
+def update_finalized(request):
+    image_ids = request.POST.getlist('image_ids[]')
+
+    try:
+        # Update the 'finalized' property for the selected images
+        for image_id in image_ids:
+            image = UploadedFile.objects.get(id=image_id)
+            print(f"Updating image {image_id}: finalized = {image.finalized}")
+            image.finalized = True
+            image.save()
+            print(f"Updated image {image_id}: finalized = {image.finalized}")
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error_message': str(e)})
 
